@@ -56,7 +56,7 @@ void Game::setNumberOfPlayers(unsigned int n)
 	for (unsigned int i = 1; i <= n; i++)
 	{
 		Player *player = Player::initWithGame(this);
-		//		player->setName( std::format( "Player-{}", i ) );
+		// player->setName( std::format( "Player-{}", i ) );
 		player->setName("Player");
 		player->setPlayerNumber(i - 1); // player numbers are zero-based
 		_players.push_back(player);
@@ -71,11 +71,27 @@ void Game::setNumberOfPlayers(unsigned int n)
 	_turns.push_back(turn);
 }
 
+void Game::enableAIForPlayer(unsigned int playerNumber, bool enable)
+{
+	if (playerNumber >= _players.size()) return;
+	_players.at(playerNumber)->setAIPlayer(enable);
+	if (enable) {
+		_gameOptions.AIPlayer = playerNumber;
+		_gameOptions.AIPlaying = true;
+	} else {
+		// recompute AIPlaying — true if any player is still AI
+		bool anyAI = false;
+		for (auto *p : _players) {
+			if (p->isAIPlayer()) { anyAI = true; break; }
+		}
+		_gameOptions.AIPlaying = anyAI;
+		if (!anyAI) _gameOptions.AIPlayer = -1;
+	}
+}
+
 void Game::setAIPlayer(unsigned int playerNumber)
 {
-	_players.at(playerNumber)->setAIPlayer(true);
-	_gameOptions.AIPlayer = playerNumber;
-	_gameOptions.AIPlaying = true;
+	enableAIForPlayer(playerNumber, true);
 }
 
 void Game::startGame()
@@ -362,8 +378,8 @@ void Game::mouseUp(ImVec2 &location, Entity *entity)
 			{
 				pieceTaken(_dropTarget->bit());
 			}
-			// Is the move legal?
-			if (_dropTarget && _dropTarget->dropBitAtPoint(_dragBit, _dragBit->getPosition()))
+			// Is the move legal?  Also re-check game-level legality at drop time.
+			if (_dropTarget && canBitMoveFromTo(*_dragBit, *_oldHolder, *_dropTarget) && _dropTarget->dropBitAtPoint(_dragBit, _dragBit->getPosition()))
 			{
 				// Yes, notify the interested parties:
 				_dragBit->setPickedUp(false);

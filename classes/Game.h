@@ -103,6 +103,7 @@ public:
 
 	void setNumberOfPlayers(unsigned int playerCount);
 	void setAIPlayer(unsigned int playerNumber);
+	void enableAIForPlayer(unsigned int playerNumber, bool enable);
 	virtual int getAIDepathSearches() { return _gameOptions.AIDepthSearches; };
 	virtual int getAIMAXDepth() { return _gameOptions.AIMAXDepth; };
 

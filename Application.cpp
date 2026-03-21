@@ -31,7 +31,7 @@ namespace ClassGame {
         {
                 ImGui::DockSpaceOverViewport();
 
-                //ImGui::ShowDemoWindow();
+                // ImGui::ShowDemoWindow();
 
                 ImGui::Begin("Settings");
 
@@ -76,6 +76,17 @@ namespace ClassGame {
                         ImGui::Text("%s", stateString.substr(y*stride,stride).c_str());
                     }
                     ImGui::Text("Current Board State: %s", game->stateString().c_str());
+                    // Player AI toggles
+                    unsigned int playerCount = (unsigned int)game->_gameOptions.numberOfPlayers;
+                    unsigned int maxPlayersToShow = (playerCount < 2) ? playerCount : 2;
+                    for (unsigned int i = 0; i < maxPlayersToShow; i++) {
+                        Player* p = game->getPlayerAt(i);
+                        bool isAI = p->isAIPlayer();
+                        std::string label = std::string("Enable AI (") + (i == 0 ? "white" : "black") + ")";
+                        if (ImGui::Checkbox(label.c_str(), &isAI)) {
+                            game->enableAIForPlayer(i, isAI);
+                        }
+                    }
                 }
                 ImGui::End();
 

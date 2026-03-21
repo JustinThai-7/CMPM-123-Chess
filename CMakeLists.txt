@@ -65,6 +65,7 @@ add_executable(demo Application.cpp
                           classes/Othello.cpp
                           classes/Connect4.cpp
                           classes/Chess.cpp
+                          classes/MagicBitboards.cpp
                           ${BCKD_FILE}
                           ${MAIN_FILE}
                           ${IMPL_FILE}

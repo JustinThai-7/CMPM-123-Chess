@@ -24,6 +24,10 @@ Bit *BitHolder::bit()
 
 void BitHolder::setBit(Bit *abit)
 {
+	// Ownership: setBit takes ownership of `abit` and will delete any existing
+	// Bit previously held. Callers transferring a Bit between holders should
+	// pass the Bit pointer and must not use the old pointer after transfer.
+	// Passing nullptr clears the holder and deletes the previous Bit.
 	if (abit != (void *)bit())
 	{
 		if (_bit)
